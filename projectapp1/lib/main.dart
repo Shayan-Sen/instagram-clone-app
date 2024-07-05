@@ -1,12 +1,12 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors  Link for infoplist:https://youtu.be/mEPm9w5QlJM?t=5448
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:projectapp1/firebase_options.dart';
 // import 'package:projectapp1/responsive/mobile_screen_layout.dart';
 // import 'package:projectapp1/responsive/responsive_layout_screen.dart';
 // import 'package:projectapp1/responsive/web_screen_layout.dart';
-// import 'package:projectapp1/screens.dart/login_screen.dart';
-import 'package:projectapp1/screens.dart/signup_screen.dart';
+import 'package:projectapp1/screens.dart/login_screen.dart';
+// import 'package:projectapp1/screens.dart/signup_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: SignupScreen(),
+      home: LoginScreen(),
     );
   }
 }

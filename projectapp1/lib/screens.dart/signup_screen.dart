@@ -1,8 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:projectapp1/resources/auth_methods.dart';
 import 'package:projectapp1/utils/colors.dart';
+import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/text_field_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,6 +21,8 @@ class _LoginScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,6 +31,34 @@ class _LoginScreenState extends State<SignupScreen> {
     _bioController.dispose();
     _usernameController.dispose();
     super.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
+  void signupUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethods().signupUser(
+        email: _emailController.text,
+        bio: _bioController.text,
+        password: _passwordController.text,
+        username: _usernameController.text,
+        file: _image!);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res != "success") {
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -53,16 +87,19 @@ class _LoginScreenState extends State<SignupScreen> {
               //  a circular widget to show our selected file
               Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 64,
-                    backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1719822077838-b48bf2c7903d?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 64, backgroundImage: MemoryImage(_image!))
+                      : CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(
+                              'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg'),
+                        ),
                   Positioned(
                       bottom: -10,
                       left: 80,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: selectImage,
                         icon: Icon(Icons.add_a_photo),
                         color: Colors.white,
                       ))
@@ -109,17 +146,20 @@ class _LoginScreenState extends State<SignupScreen> {
               ),
               //button login
               InkWell(
-                child: Center(
-                  child: Container(
-                    child: Text("Log In"),
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4))),
-                        color: blueColor),
-                  ),
+                onTap: signupUser,
+                child: Container(
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                          color: primaryColor,
+                        )
+                      : Text("Sign Up"),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                      color: blueColor),
                 ),
               ),
               //change to sign up

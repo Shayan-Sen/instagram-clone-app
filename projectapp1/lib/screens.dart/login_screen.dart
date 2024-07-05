@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projectapp1/resources/auth_methods.dart';
 import 'package:projectapp1/utils/colors.dart';
+import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/text_field_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,12 +17,27 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != "success") {
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -66,17 +83,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               //button login
               InkWell(
-                child: Center(
-                  child: Container(
-                    child: Text("Log In"),
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4))),
-                        color: blueColor),
-                  ),
+                onTap: loginUser,
+                child: Container(
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                          color: primaryColor,
+                        )
+                      : Text("Log In"),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                      color: blueColor),
                 ),
               ),
               //change to sign up
