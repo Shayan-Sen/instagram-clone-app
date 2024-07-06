@@ -1,4 +1,4 @@
-class User {
+class Users {
   final String email;
   final String photoUrl;
   final String username;
@@ -7,7 +7,7 @@ class User {
   final List followers;
   final List following;
 
-  User(
+  Users(
       {required this.email,
       required this.photoUrl,
       required this.username,
