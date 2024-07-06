@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projectapp1/resources/auth_methods.dart';
+import 'package:projectapp1/screens.dart/signup_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/text_field_input.dart';
@@ -37,7 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (res != "success") {
       showSnackBar(res, context);
+    } else {
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ,))
     }
+  }
+
+  void navigateToSignup() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => SignupScreen(),
+    ));
   }
 
   @override
@@ -111,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text("Don't have an account?"),
                       padding: EdgeInsets.symmetric(vertical: 8)),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: navigateToSignup,
                     child: Center(
                       child: Container(
                           child: Text(
