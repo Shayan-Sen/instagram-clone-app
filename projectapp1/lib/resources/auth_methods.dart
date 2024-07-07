@@ -9,6 +9,15 @@ import 'package:projectapp1/resources/storage_methods.dart';
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<Users> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return Users.fromSnap(snap);
+  }
+
   //sign up user
   Future<String> signupUser({
     required String email,
