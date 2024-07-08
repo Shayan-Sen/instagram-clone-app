@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:projectapp1/providers/user_provider.dart';
-import 'package:projectapp1/utils/dimensions.dart';
+import 'package:projectapp1/utils/global_variables.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
