@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projectapp1/models/users.dart';
+import 'package:projectapp1/providers/user_provider.dart';
 import 'package:projectapp1/utils/colors.dart';
+import 'package:projectapp1/widgets/like_animation.dart';
+import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
   final snap;
@@ -8,6 +12,7 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Users user = Provider.of<UserProvider>(context).getUser;
     return Container(
       color: mobileBackgroundColor,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -75,12 +80,16 @@ class PostCard extends StatelessWidget {
           //LIKE COMMENT AND SAVE SECTION
           Row(
             children: [
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  )),
+              LikeAnimation(
+                isAnimating: snap['likes'].contains(user.uid),
+                smallLike: true,
+                child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )),
+              ),
               IconButton(
                   onPressed: () {},
                   icon: Icon(
@@ -157,3 +166,5 @@ class PostCard extends StatelessWidget {
     );
   }
 }
+
+/*https://youtu.be/mEPm9w5QlJM?t=16259*/
