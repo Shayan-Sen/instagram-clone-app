@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:projectapp1/models/users.dart';
 import 'package:projectapp1/providers/user_provider.dart';
@@ -75,10 +76,25 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ],
         ),
       )),
-      body: CommentCard(),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.snap['postId'])
+            .collection('comments')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: CircularProgressIndicator(
+              color: Colors.blue,
+            ));
+          }
+          return ListView.builder(
+            itemCount: (snapshot.data! as dynamic).docs.length,
+            itemBuilder: (context, index) => CommentCard(),
+          );
+        },
+      ),
     );
   }
 }
-
-
-// https://youtu.be/mEPm9w5QlJM?t=18564

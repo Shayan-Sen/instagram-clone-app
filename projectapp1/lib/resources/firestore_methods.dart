@@ -71,8 +71,6 @@ class FirestoreMethods {
           'datePublished': DateTime.now()
         });
       }
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (e) {}
   }
 }
