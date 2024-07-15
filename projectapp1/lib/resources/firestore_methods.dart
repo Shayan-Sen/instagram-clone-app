@@ -48,12 +48,8 @@ class FirestoreMethods {
     }
   }
 
-  Future<void> postCommment(
-      {required String postId,
-      required String uid,
-      required String name,
-      required String profilePic,
-      required String text}) async {
+  Future<void> postCommment(String postId, String uid, String name,
+      String profilePic, String text) async {
     try {
       if (text.isNotEmpty) {
         String commentId = Uuid().v1();
