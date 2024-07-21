@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projectapp1/resources/auth_methods.dart';
+import 'package:projectapp1/responsive/mobile_screen_layout.dart';
+import 'package:projectapp1/responsive/responsive_layout_screen.dart';
+import 'package:projectapp1/responsive/web_screen_layout.dart';
 import 'package:projectapp1/screens.dart/signup_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:projectapp1/utils/utils.dart';
@@ -38,6 +41,15 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (res != "success") {
       showSnackBar(res, context);
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => ResponsiveLayout(
+                  webScreenLayout: WebScreenLayout(),
+                  mobileScreenLayout: MobileScreenLayout()),
+            ),
+            (route) => false);
+      }
     } else {
       // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ,))
     }
