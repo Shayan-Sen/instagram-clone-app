@@ -64,6 +64,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     users.username,
                     users.photoUrl,
                     _commentController.text);
+                setState(() {
+                  _commentController.text = '';
+                });
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -81,6 +84,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
             .collection('posts')
             .doc(widget.snap['postId'])
             .collection('comments')
+            .orderBy('datePublished', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -91,7 +95,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
           }
           return ListView.builder(
             itemCount: (snapshot.data! as dynamic).docs.length,
-            itemBuilder: (context, index) => CommentCard(),
+            itemBuilder: (context, index) => CommentCard(
+              snap: (snapshot.data! as dynamic).docs[index].data(),
+            ),
           );
         },
       ),
