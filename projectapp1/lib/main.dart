@@ -7,7 +7,7 @@ import 'package:projectapp1/providers/user_provider.dart';
 import 'package:projectapp1/responsive/mobile_screen_layout.dart';
 import 'package:projectapp1/responsive/responsive_layout_screen.dart';
 import 'package:projectapp1/responsive/web_screen_layout.dart';
-import 'package:projectapp1/screens.dart/login_screen.dart';
+import 'package:projectapp1/screens/login_screen.dart';
 // import 'package:projectapp1/screens.dart/signup_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:flutter/material.dart';

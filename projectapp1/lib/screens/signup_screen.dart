@@ -1,63 +1,73 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:projectapp1/resources/auth_methods.dart';
-import 'package:projectapp1/responsive/mobile_screen_layout.dart';
-import 'package:projectapp1/responsive/responsive_layout_screen.dart';
-import 'package:projectapp1/responsive/web_screen_layout.dart';
-import 'package:projectapp1/screens.dart/signup_screen.dart';
+import 'package:projectapp1/screens/login_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
+import 'package:projectapp1/utils/global_variables.dart';
 import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/text_field_input.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
   bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _bioController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
-  void loginUser() async {
+  void selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
+  void signupUser() async {
     setState(() {
       _isLoading = true;
     });
-    String res = await AuthMethods().loginUser(
-        email: _emailController.text, password: _passwordController.text);
+
+    String res = await AuthMethods().signupUser(
+        email: _emailController.text,
+        bio: _bioController.text,
+        password: _passwordController.text,
+        username: _usernameController.text,
+        file: _image!);
+
     setState(() {
       _isLoading = false;
     });
+
     if (res != "success") {
       showSnackBar(res, context);
-      if (context.mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => ResponsiveLayout(
-                  webScreenLayout: WebScreenLayout(),
-                  mobileScreenLayout: MobileScreenLayout()),
-            ),
-            (route) => false);
-      }
     } else {
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ,))
+      navigateToLogin();
     }
   }
 
-  void navigateToSignup() {
+  void navigateToLogin() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => SignupScreen(),
+      builder: (context) => LoginScreen(),
     ));
   }
 
@@ -66,7 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 32),
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : EdgeInsets.symmetric(horizontal: 32),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,7 +95,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 64,
               ),
               SizedBox(
-                height: 64,
+                height: 24,
+              ),
+              //  a circular widget to show our selected file
+              Stack(
+                children: [
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 64, backgroundImage: MemoryImage(_image!))
+                      : CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(
+                              'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg'),
+                        ),
+                  Positioned(
+                      bottom: -10,
+                      left: 80,
+                      child: IconButton(
+                        onPressed: selectImage,
+                        icon: Icon(Icons.add_a_photo),
+                        color: Colors.white,
+                      ))
+                ],
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              //text field input:username
+              TextFieldInput(
+                  textEditingController: _usernameController,
+                  hintText: 'Enter your username',
+                  textInputType: TextInputType.text),
+
+              SizedBox(
+                height: 24,
               ),
               //text field input:email
               TextFieldInput(
@@ -102,15 +148,24 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 24,
               ),
+              //text field input:bio
+              TextFieldInput(
+                  textEditingController: _bioController,
+                  hintText: 'Enter your bio',
+                  textInputType: TextInputType.text),
+
+              SizedBox(
+                height: 24,
+              ),
               //button login
               InkWell(
-                onTap: loginUser,
+                onTap: signupUser,
                 child: Container(
                   child: _isLoading
                       ? CircularProgressIndicator(
                           color: primaryColor,
                         )
-                      : Text("Log In"),
+                      : Text("Sign Up"),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(vertical: 12),
@@ -129,14 +184,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                      child: Text("Don't have an account?"),
+                      child: Text("Account already exists?"),
                       padding: EdgeInsets.symmetric(vertical: 8)),
                   GestureDetector(
-                    onTap: navigateToSignup,
+                    onTap: navigateToLogin,
                     child: Center(
                       child: Container(
                           child: Text(
-                            "Sign Up",
+                            "Login",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, color: blueColor),
                           ),

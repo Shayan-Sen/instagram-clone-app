@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:projectapp1/models/users.dart';
 import 'package:projectapp1/providers/user_provider.dart';
 import 'package:projectapp1/resources/firestore_methods.dart';
-import 'package:projectapp1/screens.dart/comments_screen.dart';
+import 'package:projectapp1/screens/comments_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/like_animation.dart';

@@ -3,13 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:projectapp1/resources/auth_methods.dart';
 import 'package:projectapp1/resources/firestore_methods.dart';
-import 'package:projectapp1/screens.dart/login_screen.dart';
+import 'package:projectapp1/screens/login_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 import 'package:projectapp1/utils/utils.dart';
 import 'package:projectapp1/widgets/follow_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
+
   const ProfileScreen({super.key, required this.uid});
 
   @override
@@ -18,7 +19,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var userData = {};
-  int postLen = 0, followers = 0, following = 0;
+  int postLen = 0;
+  int followers = 0;
+  int following = 0;
   bool isFollowing = false;
   bool isLoading = false;
 
@@ -37,7 +40,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .collection('users')
           .doc(widget.uid)
           .get();
-//get post LENGTH
+
+      // get post lENGTH
       var postSnap = await FirebaseFirestore.instance
           .collection('posts')
           .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -52,7 +56,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .contains(FirebaseAuth.instance.currentUser!.uid);
       setState(() {});
     } catch (e) {
-      showSnackBar(e.toString(), context);
+      showSnackBar(
+        e.toString(),
+        context,
+      );
     }
     setState(() {
       isLoading = false;
@@ -62,10 +69,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? Center(
-            child: CircularProgressIndicator(
-              color: blueColor,
-            ),
+        ? const Center(
+            child: CircularProgressIndicator(),
           )
         : Scaffold(
             appBar: AppBar(
@@ -78,14 +83,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             body: ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
                       Row(
                         children: [
                           CircleAvatar(
                             backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(userData['photoUrl']),
+                            backgroundImage: NetworkImage(
+                              userData['photoUrl'],
+                            ),
                             radius: 40,
                           ),
                           Expanded(
@@ -97,17 +104,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    buildStatColumn(postLen, 'posts'),
-                                    buildStatColumn(followers, 'followers'),
-                                    buildStatColumn(following, 'following'),
+                                    buildStatColumn(postLen, "posts"),
+                                    buildStatColumn(followers, "followers"),
+                                    buildStatColumn(following, "following"),
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    (FirebaseAuth.instance.currentUser!.uid ==
-                                            widget.uid)
+                                    FirebaseAuth.instance.currentUser!.uid ==
+                                            widget.uid
                                         ? FollowButton(
                                             text: 'Sign Out',
                                             backgroundColor:
@@ -116,12 +123,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             borderColor: Colors.grey,
                                             function: () async {
                                               await AuthMethods().signOut();
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const LoginScreen(),
-                                              ));
+                                              if (context.mounted) {
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen(),
+                                                  ),
+                                                );
+                                              }
                                             },
                                           )
                                         : isFollowing
@@ -133,9 +143,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 function: () async {
                                                   await FirestoreMethods()
                                                       .followUser(
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid,
-                                                          userData['uid']);
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid,
+                                                    userData['uid'],
+                                                  );
+
                                                   setState(() {
                                                     isFollowing = false;
                                                     followers--;
@@ -150,17 +162,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 function: () async {
                                                   await FirestoreMethods()
                                                       .followUser(
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid,
-                                                          userData['uid']);
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid,
+                                                    userData['uid'],
+                                                  );
+
                                                   setState(() {
                                                     isFollowing = true;
                                                     followers++;
                                                   });
                                                 },
-                                              ),
+                                              )
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -168,23 +182,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(top: 15),
+                        padding: const EdgeInsets.only(
+                          top: 15,
+                        ),
                         child: Text(
                           userData['username'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(top: 1),
-                        child: Text(userData['bio']),
+                        padding: const EdgeInsets.only(
+                          top: 1,
+                        ),
+                        child: Text(
+                          userData['bio'],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Divider(),
+                const Divider(),
                 FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('posts')
@@ -193,7 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
-                          child: CircularProgressIndicator(color: blueColor));
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
                     return GridView.builder(
@@ -210,7 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         DocumentSnapshot snap =
                             (snapshot.data! as dynamic).docs[index];
 
-                        return Container(
+                        return SizedBox(
                           child: Image(
                             image: NetworkImage(snap['postUrl']),
                             fit: BoxFit.cover,
@@ -232,14 +253,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           num.toString(),
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Container(
           margin: const EdgeInsets.only(top: 4),
           child: Text(
             label,
             style: const TextStyle(
-                fontSize: 15, fontWeight: FontWeight.w400, color: Colors.grey),
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
           ),
         ),
       ],
