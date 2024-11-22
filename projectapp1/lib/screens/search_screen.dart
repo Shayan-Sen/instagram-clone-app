@@ -5,7 +5,7 @@ import 'package:projectapp1/screens/profile_screen.dart';
 import 'package:projectapp1/utils/colors.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();

@@ -6,7 +6,7 @@ import 'package:projectapp1/utils/global_variables.dart';
 import 'package:projectapp1/widgets/post_card.dart';
 
 class FeedScreen extends StatefulWidget {
-  const FeedScreen({Key? key}) : super(key: key);
+  const FeedScreen({super.key});
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();

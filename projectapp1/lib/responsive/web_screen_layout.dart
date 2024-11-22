@@ -4,7 +4,7 @@ import 'package:projectapp1/utils/colors.dart';
 import 'package:projectapp1/utils/global_variables.dart';
 
 class WebScreenLayout extends StatefulWidget {
-  const WebScreenLayout({Key? key}) : super(key: key);
+  const WebScreenLayout({super.key});
 
   @override
   State<WebScreenLayout> createState() => _WebScreenLayoutState();
